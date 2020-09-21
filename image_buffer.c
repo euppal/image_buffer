@@ -161,9 +161,9 @@ void write_rgb_region(
 ) {
     image_buffer_dimensions min_x, min_y, max_x, max_y;
     min_x = min(buffer->_x, end_x);
-    min_y = min(buffer->_y, end_y);
+    min_y = buffer->_height - max(buffer->_y, end_y);
     max_x = max(buffer->_x, end_x);
-    max_y = max(buffer->_y, end_y);
+    max_y = buffer->_height - min(buffer->_y, end_y);
     
     for (image_buffer_dimensions row = min_y; row < max_y; row++) {
         image_buffer_int* row_pixels = buffer->_data[row];
@@ -247,9 +247,9 @@ void write_grayscale_region(
 ) {
     image_buffer_dimensions min_x, min_y, max_x, max_y;
     min_x = min(buffer->_x, end_x);
-    min_y = min(buffer->_y, end_y);
+    min_y = buffer->_height - max(buffer->_y, end_y);
     max_x = max(buffer->_x, end_x);
-    max_y = max(buffer->_y, end_y);
+    max_y = buffer->_height - min(buffer->_y, end_y);
     
     for (image_buffer_dimensions row = min_y; row < max_y; row++) {
         image_buffer_int* row_pixels = buffer->_data[row];
