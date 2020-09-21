@@ -258,3 +258,29 @@ void write_grayscale_region(
         }
     }
 }
+
+void write_grayscale_circle(
+    struct image_buffer* buffer,
+    image_buffer_int v,
+    image_buffer_dimensions radius
+) {
+    const image_buffer_dimensions r = radius * radius;
+    
+    const image_buffer_dimensions center_x = buffer->_width / 2;
+    const image_buffer_dimensions center_y = buffer->_height / 2;
+    
+    const image_buffer_dimensions x0 = buffer->_x - radius - center_x;
+    const image_buffer_dimensions x1 = buffer->_x + radius - center_x;
+    const image_buffer_dimensions y0 = buffer->_y - radius - center_y;
+    const image_buffer_dimensions y1 = buffer->_y + radius - center_y;
+    
+    for (image_buffer_dimensions y = y0; y < y1; y++) {
+        const image_buffer_dimensions row = y + center_y;
+        image_buffer_int* row_pixels = buffer->_data[row];
+        for (image_buffer_dimensions x = x0; x < x1; x++) {
+            if (x * x + y * y <= r) {
+                row_pixels[x + center_x] = v;
+            }
+        }
+    }
+}
