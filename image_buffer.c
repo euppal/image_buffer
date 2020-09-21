@@ -167,10 +167,10 @@ void write_rgb_region(
     
     for (image_buffer_dimensions row = min_y; row < max_y; row++) {
         image_buffer_int* row_pixels = buffer->_data[row];
-        for (image_buffer_dimensions col = min_x; col < max_x; col += 3) {
-            row_pixels[col] = r;
-            row_pixels[col + 1] = g;
-            row_pixels[col + 2] = b;
+        for (image_buffer_dimensions col = min_x; col < max_x; col++) {
+            row_pixels[col * 3 ] = r;
+            row_pixels[col * 3  + 1] = g;
+            row_pixels[col * 3  + 2] = b;
         }
     }
 }
