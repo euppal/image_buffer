@@ -207,7 +207,7 @@ void write_grayscale_line(
         float error = 0.0f;
         image_buffer_dimensions y = y0;
         for (image_buffer_dimensions x = x0; x <= x1; ++x) {
-            pixel_cursor(buffer, x, buffer->_height - y);
+            pixel_cursor(buffer, x, buffer->_height - y - 1);
             write_grayscale_pixel(buffer, v);
             error += deltaerr;
             if (error >= 0.5) {
@@ -228,7 +228,7 @@ void write_grayscale_line(
         float error = 0.0f;
         size_t x = x0;
         for (size_t y = y0; y <= y1; ++y) {
-            pixel_cursor(buffer, x, buffer->_height - y);
+            pixel_cursor(buffer, x, buffer->_height - y - 1);
             write_grayscale_pixel(buffer, v);
             error += deltaerr;
             if (error >= 0.5) {
