@@ -64,8 +64,8 @@ We supplied a different intensity value, `128`, to distinguish the wheels from t
 Finally, we can save the image to disk and then free the contents of the image (before we `free` it). These three lines are all you need.
 
 ```c
-save_buffer(image, "Truck.ppm");
-system("open Truck.ppm");
+save_buffer(image, "Truck.pgm");
+system("open Truck.pgm");
 free_buffer(image);
 ```
 
@@ -97,7 +97,7 @@ int main() {
     pixel_cursor(image, 400, 64);
     write_grayscale_circle(image, 128, 32);
 
-    save_buffer(image, "Truck.ppm"); system("open Truck.ppm");
+    save_buffer(image, "Truck.pgm"); system("open Truck.pgm");
     free_buffer(image);
     free(image);
 }
