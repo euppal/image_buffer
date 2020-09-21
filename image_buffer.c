@@ -266,21 +266,20 @@ void write_grayscale_circle(
 ) {
     const image_buffer_dimensions r = radius * radius;
     
-    const image_buffer_dimensions center_x = buffer->_width / 2;
-    const image_buffer_dimensions center_y = buffer->_height / 2;
-    
     const image_buffer_dimensions x0 = -radius;
     const image_buffer_dimensions x1 = radius;
     const image_buffer_dimensions y0 = -radius;
     const image_buffer_dimensions y1 = radius;
     
     for (image_buffer_dimensions y = y0; y < y1; y++) {
-        const image_buffer_dimensions row = buffer->_y + y + center_y;
+        const image_buffer_dimensions row = buffer->_height - (y + buffer->_y);
         image_buffer_int* row_pixels = buffer->_data[row];
         for (image_buffer_dimensions x = x0; x < x1; x++) {
             if (x * x + y * y <= r) {
-                row_pixels[buffer->_x + x + center_x] = v;
+                row_pixels[buffer->_x + x] = v;
             }
         }
     }
+}
+
 }
