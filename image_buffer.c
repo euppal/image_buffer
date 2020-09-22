@@ -47,11 +47,11 @@ void save_buffer(
     FILE* img = fopen(dest, "wb");
     switch (buffer->_format) {
         case image_format_grayscale: {
-            fputs("P2\n", img);
+            fputs("P5\n", img);
             break;
         }
         case image_format_rgb: {
-            fputs("P3\n", img);
+            fputs("P6\n", img);
             break;
         }
     }
@@ -62,9 +62,8 @@ void save_buffer(
     for (image_buffer_dimensions y = 0; y < buffer->_height; y++) {
         const image_buffer_int* row_pixels = buffer->_data[y];
         for (image_buffer_dimensions x = 0; x < buffer->_width * buffer->_format; x++) {
-            fprintf(img, "%d ", row_pixels[x]);
+            fputc(row_pixels[x], img);
         }
-        fputc('\n', img);
     }
     fclose(img);
 }
