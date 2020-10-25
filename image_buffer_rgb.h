@@ -43,6 +43,7 @@ void write_wrgb_pixel(
 
 void write_wrgb_line(
     struct image_buffer* buffer,
+    image_buffer_int r,
     image_buffer_int g,
     image_buffer_int b,
     image_buffer_dimensions dest_x,
