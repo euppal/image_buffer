@@ -6,12 +6,14 @@
 #ifndef image_buffer_h
 #define image_buffer_h
 
-typedef int image_buffer_int;
+typedef unsigned short image_buffer_int;
 typedef long image_buffer_dimensions;
 
 typedef enum {
     image_format_grayscale = 1,
     image_format_rgb = 3,
+    image_format_wide_grayscale = 2,
+    image_format_wide_rgb = 6,
 } image_format;
 
 struct image_buffer {

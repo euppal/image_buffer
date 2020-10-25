@@ -46,23 +46,36 @@ void save_buffer(
 
     FILE* img = fopen(dest, "wb");
     switch (buffer->_format) {
-        case image_format_grayscale: {
+        case image_format_grayscale:
+        case image_format_wide_grayscale: {
             fputs("P5\n", img);
             break;
         }
-        case image_format_rgb: {
+        case image_format_rgb:
+        case image_format_wide_rgb: {
             fputs("P6\n", img);
             break;
         }
     }
     
     fprintf(img, "%ld %ld\n", buffer->_width, buffer->_height);
-    
-    fputs("255\n", img);
+    switch (buffer->_format) {
+        case image_format_wide_rgb:
+        case image_format_wide_grayscale: {
+            fputs("65535\n", img);
+            break;
+        }
+        case image_format_rgb:
+        case image_format_grayscale: {
+            fputs("255\n", img);
+            break;
+        }
+    }
     for (image_buffer_dimensions y = 0; y < buffer->_height; y++) {
         const image_buffer_int* row_pixels = buffer->_data[y];
         for (image_buffer_dimensions x = 0; x < buffer->_width * buffer->_format; x++) {
             fputc(row_pixels[x], img);
+            
         }
     }
     fclose(img);
@@ -137,7 +150,6 @@ void write_rgb_line(
         float deltaerr = fabsf(deltax / deltay);
         float error = 0.0f;
         image_buffer_dimensions x = x0;
-        const image_buffer_dimensions new_y1 = (image_buffer_dimensions)y1;
         for (image_buffer_dimensions y = y0; y <= (image_buffer_dimensions)y1; y++) {
             pixel_cursor(buffer, x, buffer->_height - y - 1);
             write_rgb_pixel(buffer, r, g, b);
@@ -167,9 +179,51 @@ void write_rgb_region(
     for (image_buffer_dimensions row = min_y; row < max_y; row++) {
         image_buffer_int* row_pixels = buffer->_data[row];
         for (image_buffer_dimensions col = min_x; col < max_x; col++) {
-            row_pixels[col * 3 ] = r;
-            row_pixels[col * 3  + 1] = g;
-            row_pixels[col * 3  + 2] = b;
+            row_pixels[col * 3] = r;
+            row_pixels[col * 3 + 1] = g;
+            row_pixels[col * 3 + 2] = b;
+        }
+    }
+}
+
+void write_wrgb_pixel(
+    struct image_buffer* buffer,
+    image_buffer_int r,
+    image_buffer_int g,
+    image_buffer_int b
+) {
+    image_buffer_int* row_pixels = buffer->_data[buffer->_y];
+    row_pixels[buffer->_x * 6] = r >> 8;
+    row_pixels[buffer->_x * 6 + 1] = r;
+    row_pixels[buffer->_x * 6 + 2] = g >> 8;
+    row_pixels[buffer->_x * 6 + 3] = g;
+    row_pixels[buffer->_x * 6 + 4] = b >> 8;
+    row_pixels[buffer->_x * 6 + 5] = b;
+}
+
+void write_wrgb_region(
+    struct image_buffer* buffer,
+    image_buffer_int r,
+    image_buffer_int g,
+    image_buffer_int b,
+    image_buffer_dimensions end_x,
+    image_buffer_dimensions end_y
+) {
+    image_buffer_dimensions min_x, min_y, max_x, max_y;
+    min_x = min(buffer->_x, end_x);
+    min_y = buffer->_height - max(buffer->_y, end_y);
+    max_x = max(buffer->_x, end_x);
+    max_y = buffer->_height - min(buffer->_y, end_y);
+    
+    for (image_buffer_dimensions row = min_y; row < max_y; row++) {
+        image_buffer_int* row_pixels = buffer->_data[row];
+        for (image_buffer_dimensions col = min_x; col < max_x; col++) {
+            row_pixels[col * 6] = r >> 8;
+            row_pixels[col * 6 + 1] = r;
+            row_pixels[col * 6 + 2] = g >> 8;
+            row_pixels[col * 6 + 3] = g;
+            row_pixels[col * 6 + 4] = b >> 8;
+            row_pixels[col * 6 + 5] = b;
         }
     }
 }
@@ -246,9 +300,9 @@ void write_grayscale_region(
 ) {
     image_buffer_dimensions min_x, min_y, max_x, max_y;
     min_x = min(buffer->_x, end_x);
-    min_y = buffer->_height - max(buffer->_y, end_y);
+    min_y = min(buffer->_y, end_y);
     max_x = max(buffer->_x, end_x);
-    max_y = buffer->_height - min(buffer->_y, end_y);
+    max_y = max(buffer->_y, end_y);
     
     for (image_buffer_dimensions row = min_y; row < max_y; row++) {
         image_buffer_int* row_pixels = buffer->_data[row];
@@ -279,6 +333,4 @@ void write_grayscale_circle(
             }
         }
     }
-}
-
 }
